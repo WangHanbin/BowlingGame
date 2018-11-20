@@ -10,7 +10,7 @@ class BowlingGame {
   int GetScore() const;
   void Add(int pins);
   int GetScoreForFrame(int frame) const;
-  void UpdateFrameNum();
+  void UpdateFrameNum(int pins);
   int GetCurrentFrame() const;
 
  private:

@@ -19,33 +19,43 @@ int BowlingGame::GetScore() const {
 void BowlingGame::Add(int pins) {
   throw_pins_vec_[current_throw_++] = pins;
   total_score_ = total_score_ + pins;
-  UpdateFrameNum();
+  UpdateFrameNum(pins);
 }
 
 int BowlingGame::GetScoreForFrame(int frame) const {
   int throw_index = 0;
   int result_score = 0;
   for (int i = 0; i < frame; ++i) {
-    int frame_score = throw_pins_vec_[throw_index] + throw_pins_vec_[throw_index + 1];
-    // spare bonus
-    if (frame_score == 10) {
-      result_score = result_score + frame_score + throw_pins_vec_[throw_index + 2];
+    int first_throw_score = throw_pins_vec_[throw_index];
+    if (first_throw_score == 10) {
+      result_score = result_score + first_throw_score + throw_pins_vec_[throw_index + 1] + throw_pins_vec_[throw_index + 2];
+      throw_index += 1;
     } else {
-      result_score = result_score + frame_score;
+      int frame_score = first_throw_score + throw_pins_vec_[throw_index + 1];
+      // spare bonus
+      if (frame_score == 10) {
+        result_score = result_score + frame_score + throw_pins_vec_[throw_index + 2];
+      } else {
+        result_score = result_score + frame_score;
+      }   
+        throw_index += 2;
     }
-    throw_index += 2;
   }
-
   return result_score;
 }
 
-void BowlingGame::UpdateFrameNum() {
+void BowlingGame::UpdateFrameNum(int pins) {
   if (first_throw_in_frame_) {
-    first_throw_in_frame_ = false;
+    if (pins == 10) {
+        current_frame_++;
+    } else { 
+        first_throw_in_frame_ = false;
+    }
   } else {
     current_frame_++;
     first_throw_in_frame_ = true;
   }
+  current_frame_ = std::min(11, current_frame_);
 }
 
 int BowlingGame::GetCurrentFrame() const {
